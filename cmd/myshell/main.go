@@ -36,9 +36,20 @@ func main() {
 }
 
 func parseCommand(command string) {
-	switch command {
-	case "exit 0":
-		os.Exit(0)
+	parts := strings.Fields(command) // Split the command into parts
+	if len(parts) == 0 {
+		return
+	}
+
+	switch parts[0] {
+	case "exit":
+		if len(parts) > 1 && parts[1] == "0" {
+			os.Exit(0)
+		} else {
+			fmt.Println("Invalid exit command format")
+		}
+	case "echo":
+		fmt.Println(strings.Join(parts[1:], " "))
 	default:
 		if command != "" {
 			fmt.Printf("%s: command not found\n", command)
