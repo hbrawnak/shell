@@ -37,7 +37,7 @@ func main() {
 
 func parseCommand(command string) {
 	switch command {
-	case "exit":
+	case "exit 0":
 		os.Exit(0)
 	default:
 		if command != "" {
