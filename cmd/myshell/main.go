@@ -7,9 +7,6 @@ import (
 	"strings"
 )
 
-// Ensures gofmt doesn't remove the "fmt" import in stage 1 (feel free to remove this!)
-var _ = fmt.Fprint
-
 func main() {
 	for {
 		// Uncomment this block to pass the first stage
@@ -50,9 +47,20 @@ func parseCommand(command string) {
 		}
 	case "echo":
 		fmt.Println(strings.Join(parts[1:], " "))
+	case "type":
+		parseType(parts[1])
 	default:
 		if command != "" {
 			fmt.Printf("%s: command not found\n", command)
 		}
+	}
+}
+
+func parseType(typeStr string) {
+	switch typeStr {
+	case "echo", "type", "exit":
+		fmt.Printf("%s is a shell builtin\n", typeStr)
+	default:
+		fmt.Printf("%s: not found\n", typeStr)
 	}
 }
