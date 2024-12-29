@@ -42,6 +42,8 @@ func execute(input string) {
 		handleType(args)
 	case "pwd":
 		handlePwd()
+	case "cd":
+		cd(args)
 	default:
 		runExternalCommand(command, args)
 	}
@@ -99,6 +101,18 @@ func handlePwd() {
 		return
 	}
 	fmt.Println(dir)
+}
+
+func cd(args []string) {
+	if len(args) == 0 {
+		fmt.Fprintln(os.Stdout, "cd: missing argument")
+		return
+	}
+
+	dir := args[0]
+	if err := os.Chdir(dir); err != nil {
+		fmt.Fprintf(os.Stdout, "cd: %s: No such file or directory\n", dir)
+	}
 }
 
 func runExternalCommand(command string, args []string) {
