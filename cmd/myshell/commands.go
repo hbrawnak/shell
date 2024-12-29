@@ -9,18 +9,23 @@ import (
 	"strings"
 )
 
-func exit(args []string) {
+// handleExit handles the exit command. It exits the program if the argument is "0", otherwise,
+// it prints an error message.
+func handleExit(args []string) {
 	if len(args) == 1 && args[0] == "0" {
 		os.Exit(0)
 	}
 	fmt.Println("Invalid exit command format")
 }
 
-func echo(args []string) {
+// handleEcho prints the arguments joined by a space.
+func handleEcho(args []string) {
 	fmt.Println(strings.Join(args, " "))
 }
 
-func types(args []string) {
+// handleType prints information about a command: whether it's a shell builtin or an executable found
+// in the system PATH.
+func handleType(args []string) {
 	if len(args) != 1 {
 		fmt.Println("Usage: type <command>")
 		return
@@ -38,7 +43,8 @@ func types(args []string) {
 	}
 }
 
-func pwd() {
+// handlePwd prints the current working directory.
+func handlePwd() {
 	dir, err := os.Getwd()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "Error getting current directory:", err)
@@ -47,7 +53,8 @@ func pwd() {
 	fmt.Println(dir)
 }
 
-func cd(args []string) {
+// handleCd changes the current working directory. It handles relative paths and the home directory symbol ('~').
+func handleCd(args []string) {
 	if len(args) == 0 {
 		fmt.Fprintln(os.Stdout, "cd: missing argument")
 		return
@@ -77,6 +84,8 @@ func cd(args []string) {
 	}
 }
 
+// findExecutablePath searches for the executable in the directories listed in
+// the PATH environment variable.
 func findExecutablePath(command string) string {
 	pathEnv := os.Getenv("PATH")
 	directories := strings.Split(pathEnv, ":")
@@ -93,6 +102,8 @@ func findExecutablePath(command string) string {
 	return ""
 }
 
+// runExternalCommand runs an external command and prints its output or error
+// to the standard output/error.
 func runExternalCommand(command string, args []string) {
 	cmd := exec.Command(command, args...)
 	cmd.Stdout = os.Stdout

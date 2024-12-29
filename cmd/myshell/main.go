@@ -38,15 +38,15 @@ func execute(input string) {
 
 	switch command {
 	case "exit":
-		exit(args)
+		handleExit(args)
 	case "echo":
-		echo(args)
+		handleEcho(args)
 	case "type":
-		types(args)
+		handleType(args)
 	case "pwd":
-		pwd()
+		handlePwd()
 	case "cd":
-		cd(args)
+		handleCd(args)
 	default:
 		runExternalCommand(command, args)
 	}
