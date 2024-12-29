@@ -40,6 +40,8 @@ func executeCommand(input string) {
 		handleEcho(args)
 	case "type":
 		handleType(args)
+	case "pwd":
+		handlePwd()
 	default:
 		runExternalCommand(command, args)
 	}
@@ -63,7 +65,7 @@ func handleType(args []string) {
 	}
 
 	switch args[0] {
-	case "echo", "type", "exit":
+	case "echo", "type", "exit", "pwd":
 		fmt.Printf("%s is a shell builtin\n", args[0])
 	default:
 		if path := findExecutablePath(args[0]); path != "" {
@@ -88,6 +90,15 @@ func findExecutablePath(command string) string {
 	}
 
 	return ""
+}
+
+func handlePwd() {
+	dir, err := os.Getwd()
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "Error getting current directory:", err)
+		return
+	}
+	fmt.Println(dir)
 }
 
 func runExternalCommand(command string, args []string) {
