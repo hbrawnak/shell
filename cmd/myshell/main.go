@@ -115,6 +115,17 @@ func cd(args []string) {
 	}
 
 	dir := args[0]
+
+	// Handle '~' as the home directory
+	if dir == "~" {
+		homeDir, exists := os.LookupEnv("HOME")
+		if !exists || homeDir == "" {
+			fmt.Fprintln(os.Stdout, "cd: $HOME not set")
+			return
+		}
+		dir = homeDir
+	}
+
 	cleanPath := path.Clean(dir)
 
 	if !path.IsAbs(cleanPath) {
