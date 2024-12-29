@@ -11,21 +11,25 @@ import (
 
 func main() {
 	for {
-		fmt.Fprint(os.Stdout, "$ ")
-
-		// Wait for user input
-		command, err := bufio.NewReader(os.Stdin).ReadString('\n')
-		if err != nil {
-			handleError(err)
-		}
-
-		command = strings.TrimSpace(command)
+		printPrompt()
+		command := readCommand() // Wait for user input
 		if command == "" {
 			continue // Ignore empty commands
 		}
-
 		execute(command)
 	}
+}
+
+func printPrompt() {
+	fmt.Fprint(os.Stdout, "$ ")
+}
+
+func readCommand() string {
+	command, err := bufio.NewReader(os.Stdin).ReadString('\n')
+	if err != nil {
+		handleError(err)
+	}
+	return strings.TrimSpace(command)
 }
 
 func execute(input string) {
