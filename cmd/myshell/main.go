@@ -24,11 +24,11 @@ func main() {
 			continue // Ignore empty commands
 		}
 
-		executeCommand(command)
+		execute(command)
 	}
 }
 
-func executeCommand(input string) {
+func execute(input string) {
 	parts := strings.Fields(input)
 	command := parts[0]
 	args := parts[1:]
