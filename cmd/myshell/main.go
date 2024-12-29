@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path"
 	"path/filepath"
 	"strings"
 )
@@ -114,8 +115,15 @@ func cd(args []string) {
 	}
 
 	dir := args[0]
-	if err := os.Chdir(dir); err != nil {
-		fmt.Fprintf(os.Stdout, "cd: %s: No such file or directory\n", dir)
+	cleanPath := path.Clean(dir)
+
+	if !path.IsAbs(cleanPath) {
+		dir, _ = os.Getwd()
+		cleanPath = path.Join(dir, cleanPath)
+	}
+
+	if err := os.Chdir(cleanPath); err != nil {
+		fmt.Fprintf(os.Stdout, "cd: %s: No such file or directory\n", cleanPath)
 	}
 }
 
