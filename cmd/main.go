@@ -39,19 +39,20 @@ func execute(input string) {
 	command := parts[0]
 	args := parts[1:]
 
-	switch command {
-	case "exit":
-		handleExit(args)
-	case "echo":
-		handleEcho(args)
-	case "type":
-		handleType(args)
-	case "pwd":
-		handlePwd()
-	case "cd":
-		handleCd(args)
-	default:
+	if handler, exists := builtInCommands()[command]; exists {
+		handler(args)
+	} else {
 		runExternalCommand(command, args)
+	}
+}
+
+func builtInCommands() map[string]func([]string) {
+	return map[string]func([]string){
+		"exit": handleExit,
+		"echo": handleEcho,
+		"type": handleType,
+		"pwd":  handlePwd,
+		"cd":   handleCd,
 	}
 }
 
@@ -131,7 +132,7 @@ func handleType(args []string) {
 }
 
 // handlePwd prints the current working directory.
-func handlePwd() {
+func handlePwd(args []string) {
 	dir, err := os.Getwd()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "Error getting current directory:", err)
