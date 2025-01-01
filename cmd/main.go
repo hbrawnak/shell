@@ -56,13 +56,31 @@ func execute(input string) {
 }
 
 func parseCommand(input string) []string {
-	// Regex to match single-quoted strings or unquoted parts
-	re := regexp.MustCompile(`'[^']*'|"[^"]*"|[^'"\t ]+`)
+	re := regexp.MustCompile(`'[^']*'|"([^"\\]*(\\.[^"\\]*)*)"|\\.|[^'"\t ]+`)
 	matches := re.FindAllString(input, -1)
 
 	for i, match := range matches {
-		if len(match) > 1 && (match[0] == '\'' && match[len(match)-1] == '\'' || match[0] == '"' && match[len(match)-1] == '"') {
+		switch {
+		case strings.HasPrefix(match, `'`) && strings.HasSuffix(match, `'`):
 			matches[i] = match[1 : len(match)-1]
+		case strings.HasPrefix(match, `"`) && strings.HasSuffix(match, `"`):
+			unescaped := match[1 : len(match)-1]
+			unescaped = strings.ReplaceAll(unescaped, `\'`, `'`)
+			unescaped = strings.ReplaceAll(unescaped, `\"`, `"`)
+			unescaped = strings.ReplaceAll(unescaped, `\\`, `\`)
+			matches[i] = unescaped
+		case strings.HasPrefix(match, `\`) || strings.HasSuffix(match, `\`):
+			unescaped := strings.ReplaceAll(match, `\"`, `"`)
+			unescaped = strings.ReplaceAll(unescaped, `\'`, `'`)
+			unescaped = strings.ReplaceAll(unescaped, `'\`, `'`)
+			unescaped = strings.ReplaceAll(unescaped, `"\`, `"`)
+			unescaped = strings.ReplaceAll(unescaped, `\`, ``)
+			matches[i] = strings.ReplaceAll(unescaped, ` `, "")
+		default:
+			// Replace escaped spaces with a literal space
+			// unescaped := strings.TrimPrefix(match, `\`)
+			// matches[i] = strings.TrimSuffix(unescaped, `\`)
+			matches[i] = match
 		}
 	}
 	return matches
